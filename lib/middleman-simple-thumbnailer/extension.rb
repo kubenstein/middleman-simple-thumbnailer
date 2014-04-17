@@ -26,8 +26,8 @@ module MiddlemanSimpleThumbnailer
           new_image_path = path.gsub(image_basename, new_image_basename)
 
           # resize
-          image = Magick::Image.read("./source/#{images_dir}/#{path}").first
-          image.change_geometry!(resize_to) { |cols, rows, img| img.resize!(cols, rows) }
+          image = MiniMagick::Image.open("./source/#{images_dir}/#{path}")
+          image.resize(resize_to)
 
           # rendering
           if middleman_settings.environment == :development

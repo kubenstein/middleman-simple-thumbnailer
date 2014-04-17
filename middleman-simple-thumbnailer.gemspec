@@ -16,5 +16,5 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   
   s.add_runtime_dependency("middleman", [">= 3.0.0"])
-  s.add_runtime_dependency("rmagick")
+  s.add_runtime_dependency("mini_magick")
 end
