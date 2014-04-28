@@ -1,8 +1,11 @@
 module MiddlemanSimpleThumbnailer
   class Image
+    @@all_objects = []
     attr_accessor :img_path, :middleman_config, :resize_to
 
     def initialize(img_path, middleman_config)
+      @@all_objects << self
+
       @img_path = img_path
       @middleman_config = middleman_config
     end
@@ -28,6 +31,10 @@ module MiddlemanSimpleThumbnailer
       image.write(resized_img_abs_path)
     end
 
+    def self.all_objects
+      @@all_objects
+    end
+    
     
     private
 

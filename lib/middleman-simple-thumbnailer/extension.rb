@@ -7,6 +7,17 @@
 #
 module MiddlemanSimpleThumbnailer
   class Extension < Middleman::Extension
+
+    def initialize(app, options_hash={}, &block)
+      super
+      app.after_build do |builder|
+        MiddlemanSimpleThumbnailer::Image.all_objects.each do |image| 
+          builder.say_status :create, "#{image.resized_img_path}"
+          image.save!
+        end
+      end
+    end
+
     helpers do
 
       def image_tag(path, options={})
@@ -18,7 +29,6 @@ module MiddlemanSimpleThumbnailer
         if environment == :development
           super("data:#{image.mime_type};base64,#{image.base64_data}", options)
         else
-          image.save!
           super(image.resized_img_path, options)
         end
       end
