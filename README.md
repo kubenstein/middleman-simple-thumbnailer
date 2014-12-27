@@ -13,6 +13,12 @@ gem 'middleman-simple-thumbnailer'
 
 Usage
 -----
+Enable the extension in `config.rb`:
+```
+activate :middleman_simple_thumbnailer
+```
+
+And modify your `image_tag`'s by adding `resize_to` parameter:
 ```
 = image_tag image, resize_to: '50x50', class: 'thumbnail'
 ```
