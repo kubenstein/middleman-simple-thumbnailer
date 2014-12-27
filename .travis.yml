@@ -1,0 +1,10 @@
+script:
+  - cucumber
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - ruby-head
+notifications:
+  email:
+    on_success: always
+    on_failure: always

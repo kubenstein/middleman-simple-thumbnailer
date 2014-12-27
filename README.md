@@ -1,4 +1,4 @@
-Middleman Simple Thumbnailer 
+Middleman Simple Thumbnailer [![Build Status](https://travis-ci.org/kubenstein/middleman-simple-thumbnailer.png?branch=master)](https://travis-ci.org/kubenstein/middleman-simple-thumbnailer)
 =============
 
 Middleman Simple Thumbnailer is a [Middleman](http://middlemanapp.com/) extension that allows you to create image thumbnails by providing `resize_to` option to image_tag helper.
