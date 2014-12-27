@@ -31,4 +31,3 @@ Build/Development modes
 TODO
 -----
   - add caching mechanizm in development mode
-  - add tests
