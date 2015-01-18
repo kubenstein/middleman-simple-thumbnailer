@@ -16,7 +16,7 @@ Feature: Generate image thumbnails
     When I go to "/page-with-images-to-resize.html"
     Then I should see base64ed thumbnails of the images
 
-  Scenario: After build serve resized images
+  Scenario: After build server resized images
     Given a fixture app "basic-app"
     And a successfully built app at "basic-app"
     When I cd to "build"
