@@ -20,6 +20,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'mini_magick', '~> 4'
 
   s.add_development_dependency 'rake', '~> 10'
-  s.add_development_dependency 'aruba', '~> 0.5'
+  s.add_development_dependency 'aruba', '~>0.5.4'
   s.add_development_dependency 'cucumber', '~> 1.3'
 end
