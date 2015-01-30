@@ -61,7 +61,8 @@ module MiddlemanSimpleThumbnailer
     end
 
     def resized_image_name
-      image_name.split('.').tap { |a| a.insert(-2, resize_to) }.join('.')      
+      image_name.split('.').tap { |a| a.insert(-2, resize_to) }.join('.') # add resize_to sufix
+          .gsub(/[%@!<>]/, '>' => 'gt', '<' => 'lt')                      # sanitize file name
     end
 
     def abs_path

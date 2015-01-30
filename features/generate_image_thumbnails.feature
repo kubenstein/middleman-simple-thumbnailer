@@ -21,7 +21,7 @@ Feature: Generate image thumbnails
     And a successfully built app at "basic-app"
     When I cd to "build"
     Then the following files should exist:
-      | images/original.10x10.jpg    |
+      | images/original.10x10gt.jpg    |
       | images/original.5x5.jpg      |
-    And the file "page-with-images-to-resize.html" should contain '<img class="image-resized-to10x10" src="/images/original.10x10.jpg" />'
+    And the file "page-with-images-to-resize.html" should contain '<img class="image-resized-to10x10" src="/images/original.10x10gt.jpg" />'
     And the file "page-with-images-to-resize.html" should contain '<img class="image-resized-to5x5" src="/images/original.5x5.jpg" />'

@@ -5,7 +5,7 @@ Feature: Caching thumbnails in development
     And there is no cache directory yet
     When I go to "/page-with-images-to-resize.html"
     Then the cache directory should exist with the following files
-      | images/original.10x10.eb4e78fd2554225b2.jpg |
+      | images/original.10x10gt.eb4e78fd2554225b2.jpg |
       | images/original.5x5.eb4e78fd2554225b2.jpg   |
 
   Scenario: Cached thumbnails are used, if present
