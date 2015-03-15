@@ -8,6 +8,8 @@
 module MiddlemanSimpleThumbnailer
   class Extension < Middleman::Extension
 
+    option :cache_dir, 'tmp/simple-thumbnailer-cache', 'Directory (relative to project root) for cached thumbnails.'
+
     def initialize(app, options_hash={}, &block)
       super
       app.after_build do |builder|
@@ -16,6 +18,10 @@ module MiddlemanSimpleThumbnailer
           image.save!
         end
       end
+    end
+
+    def after_configuration
+      MiddlemanSimpleThumbnailer::Image.options = options
     end
 
     helpers do
