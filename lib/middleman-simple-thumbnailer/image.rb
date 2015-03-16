@@ -88,7 +88,6 @@ module MiddlemanSimpleThumbnailer
    
     def save_cached_thumbnail
       FileUtils.mkdir_p(File.dirname(cached_resized_img_abs_path))
-      FileUtils.rm_f(cached_resized_img_abs_path)
       image.write(cached_resized_img_abs_path)
     end
     
