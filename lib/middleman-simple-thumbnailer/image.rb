@@ -1,6 +1,10 @@
+require "digest"
+
 module MiddlemanSimpleThumbnailer
   class Image
     @@all_objects = []
+    @@options = nil
+
     attr_accessor :img_path, :middleman_config, :resize_to
 
     def initialize(img_path, middleman_config)
@@ -19,12 +23,14 @@ module MiddlemanSimpleThumbnailer
     end
 
     def base64_data
-      Base64.encode64(image.to_blob)
+      Base64.encode64(File.read(cached_resized_img_abs_path))
     end
 
     def resize!(resize_to)
       self.resize_to = resize_to
+      return if cached_thumbnail_available?
       image.resize(resize_to)
+      save_cached_thumbnail
     end
 
     def save!
@@ -34,12 +40,20 @@ module MiddlemanSimpleThumbnailer
     def self.all_objects
       @@all_objects
     end
+
+    def self.options=(options)
+      @@options = options
+    end
     
     
     private
 
     def image
       @image ||= MiniMagick::Image.open(abs_path)
+    end
+
+    def image_checksum
+      @image_checksum ||= Digest::SHA2.file(abs_path).hexdigest[0..16]
     end
 
     def image_name
@@ -62,6 +76,21 @@ module MiddlemanSimpleThumbnailer
       File.join(build_dir, middleman_abs_path).gsub(image_name, resized_image_name)
     end
 
+    def cached_resized_img_abs_path
+      File.join(cache_dir, middleman_abs_path).gsub(image_name, resized_image_name).split('.').tap { |a|
+        a.insert(-2, image_checksum)
+      }.join('.')
+    end
+    
+    def cached_thumbnail_available?
+      File.exist?(cached_resized_img_abs_path)
+    end
+   
+    def save_cached_thumbnail
+      FileUtils.mkdir_p(File.dirname(cached_resized_img_abs_path))
+      image.write(cached_resized_img_abs_path)
+    end
+    
     def source_dir
       middleman_config[:source]
     end
@@ -74,5 +103,8 @@ module MiddlemanSimpleThumbnailer
       middleman_config[:build_dir]
     end
 
+    def cache_dir
+      @@options.cache_dir
+    end
   end
 end
