@@ -27,7 +27,3 @@ Build/Development modes
 -----
   During development thumbnails will be created on fly and presented as a base64 strings.
   During build thumbnails will be created as normal files and stored in same dir as their originals.
-
-TODO
------
-  - add caching mechanizm in development mode
