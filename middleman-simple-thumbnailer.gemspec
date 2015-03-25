@@ -5,8 +5,8 @@ require 'middleman-simple-thumbnailer/version'
 Gem::Specification.new do |s|
   s.name        = 'middleman-simple-thumbnailer'
   s.version     = MiddlemanSimpleThumbnailer::VERSION
-  s.authors     = ['kubenstein']
-  s.email       = ['kubenstein@gmail.com']
+  s.authors     = ['Jakub Niewczas']
+  s.email       = ['niewczas.jakub@gmail.com']
   s.homepage    = 'https://github.com/kubenstein/middleman-simple-thumbnailer'
   s.license     = 'MIT'
   s.summary     = %q{Middleman extension that allows you to create image thumbnails by providing resize_to option to image_tag helper}
