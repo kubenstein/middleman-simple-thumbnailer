@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = %q{Middleman extension that allows you to create image thumbnails by providing resize_to option to image_tag helper}
 
   s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split('\n')
+  s.test_files    = `git ls-files -- {fixtures,features}/*`.split("\n")
   s.require_paths = ['lib']
   
   s.add_runtime_dependency 'middleman-core', '~> 3'
