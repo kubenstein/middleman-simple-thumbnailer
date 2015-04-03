@@ -1,4 +1,5 @@
 require "digest"
+require 'fileutils'
 
 module MiddlemanSimpleThumbnailer
   class Image
@@ -34,7 +35,11 @@ module MiddlemanSimpleThumbnailer
     end
 
     def save!
-      image.write(resized_img_abs_path)
+      if cached_thumbnail_available?
+        FileUtils.cp cached_resized_img_abs_path, resized_img_abs_path
+      else
+        image.write(resized_img_abs_path)
+      end
     end
 
     def self.all_objects
