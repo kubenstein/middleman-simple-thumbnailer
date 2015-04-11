@@ -25,3 +25,12 @@ Then(/^I should see base64ed data of the cached thumbnails$/) do
   step %Q{I should see '#{image10x10}'}
   step %Q{I should see '#{image5x5}'}
 end
+
+Then(/^the following images should exist:$/) do |table|
+  table.hashes.each do |row|
+    in_current_dir do
+      image = MiniMagick::Image.open(row["filename"])
+      expect(image.dimensions).to eq row["dimensions"].split("x").map(&:to_i)
+    end
+  end
+end
