@@ -8,10 +8,11 @@ module MiddlemanSimpleThumbnailer
 
     attr_accessor :img_path, :middleman_config, :resize_to
 
-    def initialize(img_path, middleman_config)
+    def initialize(img_path, resize_to, middleman_config)
       @@all_objects << self
 
       @img_path = img_path
+      @resize_to = resize_to
       @middleman_config = middleman_config
     end
 
@@ -24,22 +25,16 @@ module MiddlemanSimpleThumbnailer
     end
 
     def base64_data
+      unless cached_thumbnail_available?
+        resize!
+        save_cached_thumbnail
+      end
       Base64.encode64(File.read(cached_resized_img_abs_path))
     end
 
-    def resize!(resize_to)
-      self.resize_to = resize_to
-      return if cached_thumbnail_available?
-      image.resize(resize_to)
-      save_cached_thumbnail
-    end
-
     def save!
-      if cached_thumbnail_available?
-        FileUtils.cp cached_resized_img_abs_path, resized_img_abs_path
-      else
-        image.write(resized_img_abs_path)
-      end
+      resize!
+      image.write(resized_img_abs_path)
     end
 
     def self.all_objects
@@ -52,6 +47,13 @@ module MiddlemanSimpleThumbnailer
     
     
     private
+    
+    def resize!
+      unless @already_resized
+        image.resize(resize_to)
+        @already_resized = true
+      end
+    end
 
     def image
       @image ||= MiniMagick::Image.open(abs_path)

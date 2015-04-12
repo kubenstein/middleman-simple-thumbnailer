@@ -30,8 +30,7 @@ module MiddlemanSimpleThumbnailer
         resize_to = options.delete(:resize_to)
         return super(path, options) unless resize_to
 
-        image = MiddlemanSimpleThumbnailer::Image.new(path, self.config)
-        image.resize!(resize_to)
+        image = MiddlemanSimpleThumbnailer::Image.new(path, resize_to, self.config)
         if environment == :development
           super("data:#{image.mime_type};base64,#{image.base64_data}", options)
         else

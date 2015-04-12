@@ -20,8 +20,9 @@ Feature: Generate image thumbnails
     Given a fixture app "basic-app"
     And a successfully built app at "basic-app"
     When I cd to "build"
-    Then the following files should exist:
-      | images/original.10x10gt.jpg    |
-      | images/original.5x5.jpg      |
+    Then the following images should exist:
+      | filename                    | dimensions |
+      | images/original.10x10gt.jpg | 10x5       |
+      | images/original.5x5.jpg     |  5x2       |
     And the file "page-with-images-to-resize.html" should contain '<img class="image-resized-to10x10" src="/images/original.10x10gt.jpg" />'
     And the file "page-with-images-to-resize.html" should contain '<img class="image-resized-to5x5" src="/images/original.5x5.jpg" />'
