@@ -1,5 +1,4 @@
 require "digest"
-require 'fileutils'
 
 module MiddlemanSimpleThumbnailer
   class Image
