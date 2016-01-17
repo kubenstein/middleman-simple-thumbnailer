@@ -15,7 +15,7 @@ module MiddlemanSimpleThumbnailer
       @@is_development = app.development?
       app.after_build do |builder|
         MiddlemanSimpleThumbnailer::Image.all_objects.each do |image| 
-          builder.say_status :create, "#{image.resized_img_path}"
+          builder.thor.say_status :create, "#{image.resized_img_path}"
           image.save!
         end
       end
