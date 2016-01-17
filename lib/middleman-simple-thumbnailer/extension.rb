@@ -12,6 +12,7 @@ module MiddlemanSimpleThumbnailer
 
     def initialize(app, options_hash={}, &block)
       super
+      @@is_development = app.development?
       app.after_build do |builder|
         MiddlemanSimpleThumbnailer::Image.all_objects.each do |image| 
           builder.say_status :create, "#{image.resized_img_path}"
@@ -31,7 +32,7 @@ module MiddlemanSimpleThumbnailer
         return super(path, options) unless resize_to
 
         image = MiddlemanSimpleThumbnailer::Image.new(path, resize_to, self.config)
-        if environment == :development
+        if @@is_development
           super("data:#{image.mime_type};base64,#{image.base64_data}", options)
         else
           super(image.resized_img_path, options)
@@ -39,6 +40,7 @@ module MiddlemanSimpleThumbnailer
       end
 
     end
+
   end
 end
 
