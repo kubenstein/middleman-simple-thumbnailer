@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {fixtures,features}/*`.split("\n")
   s.require_paths = ['lib']
   
-  s.add_runtime_dependency 'middleman-core', '~> 3'
+  s.add_runtime_dependency 'middleman-core', '~> 4'
   s.add_runtime_dependency 'mini_magick', '~> 4'
 
   s.add_development_dependency 'rake', '~> 10'
