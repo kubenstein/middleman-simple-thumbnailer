@@ -18,15 +18,18 @@ module MiddlemanSimpleThumbnailer
     end
 
     def store_resized_image(img_path, resize_to)
-      File.open(@tmp_path, File::RDWR|File::CREAT, 0644) { |f|
+      File.open(@tmp_path, File::RDWR|File::CREAT, 0644) do |f|
         f.flock(File::LOCK_EX)
         resized_images = f.size > 0 ? Marshal.load(f) : {}
-        resized_images["#{img_path}.#{resize_to}"] = [img_path, resize_to]
-        f.rewind
-        Marshal.dump(resized_images,f)
-        f.flush
-        f.truncate(f.pos)
-      }
+        file_key = "#{img_path}.#{resize_to}"
+        if ! resized_images.has_key?(file_key)
+          resized_images[file_key] = [img_path, resize_to]
+          f.rewind
+          Marshal.dump(resized_images,f)
+          f.flush
+          f.truncate(f.pos)
+        end
+      end
     end
 
     def after_configuration
@@ -34,7 +37,7 @@ module MiddlemanSimpleThumbnailer
     end
 
     def after_build(builder)
-      File.open(@tmp_path, "r") {|f|
+      File.open(@tmp_path, "r") do |f|
         f.flock(File::LOCK_SH)
         resized_images = Marshal.load(f)
         resized_images.values.each do |img_array|
@@ -42,7 +45,7 @@ module MiddlemanSimpleThumbnailer
           builder.thor.say_status :create, "#{img.resized_img_abs_path}"
           img.save!
         end
-      }
+      end
       File.delete(@tmp_path)
     end
 
