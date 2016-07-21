@@ -1,3 +1,5 @@
+require 'tmpdir'
+
 #
 # add resize_to param to image_tag to create thumbnails
 #
@@ -10,11 +12,21 @@ module MiddlemanSimpleThumbnailer
 
     option :cache_dir, 'tmp/simple-thumbnailer-cache', 'Directory (relative to project root) for cached thumbnails.'
 
-    attr_reader :resized_images
-
     def initialize(app, options_hash={}, &block)
       super
-      @resized_images = {}
+      @tmp_path = Dir::Tmpname.create('thumbnail', nil) {}
+    end
+
+    def store_resized_image(img_path, resize_to)
+      File.open(@tmp_path, File::RDWR|File::CREAT, 0644) { |f|
+        f.flock(File::LOCK_EX)
+        resized_images = f.size > 0 ? Marshal.load(f) : {}
+        resized_images["#{img_path}.#{resize_to}"] = [img_path, resize_to]
+        f.rewind
+        Marshal.dump(resized_images,f)
+        f.flush
+        f.truncate(f.pos)
+      }
     end
 
     def after_configuration
@@ -22,10 +34,16 @@ module MiddlemanSimpleThumbnailer
     end
 
     def after_build(builder)
-      @resized_images.values.each do |img|
-        builder.thor.say_status :create, "#{img.resized_img_abs_path}"
-        img.save!
-      end
+      File.open(@tmp_path, "r") {|f|
+        f.flock(File::LOCK_SH)
+        resized_images = Marshal.load(f)
+        resized_images.values.each do |img_array|
+          img = MiddlemanSimpleThumbnailer::Image.new(img_array[0], img_array[1], builder.app.config)
+          builder.thor.say_status :create, "#{img.resized_img_abs_path}"
+          img.save!
+        end
+      }
+      File.delete(@tmp_path)
     end
 
     helpers do
@@ -39,7 +57,7 @@ module MiddlemanSimpleThumbnailer
           super("data:#{image.mime_type};base64,#{image.base64_data}", options)
         else
           ext = app.extensions[:middleman_simple_thumbnailer]
-          ext.resized_images.store(image.resized_img_path, image)
+          ext.store_resized_image(path, resize_to)
           super(image.resized_img_path, options)
         end
       end

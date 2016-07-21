@@ -1,4 +1,4 @@
-require "digest"
+require 'digest'
 
 module MiddlemanSimpleThumbnailer
   class Image
