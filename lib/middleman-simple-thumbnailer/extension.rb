@@ -1,5 +1,5 @@
 #
-# add resize_to param to image_tag to create thumbnails 
+# add resize_to param to image_tag to create thumbnails
 #
 #
 # Usage:
@@ -10,19 +10,22 @@ module MiddlemanSimpleThumbnailer
 
     option :cache_dir, 'tmp/simple-thumbnailer-cache', 'Directory (relative to project root) for cached thumbnails.'
 
+    attr_reader :resized_images
+
     def initialize(app, options_hash={}, &block)
       super
-      @@is_development = app.development?
-      app.after_build do |builder|
-        MiddlemanSimpleThumbnailer::Image.all_objects.each do |image| 
-          builder.thor.say_status :create, "#{image.resized_img_path}"
-          image.save!
-        end
-      end
+      @resized_images = {}
     end
 
     def after_configuration
       MiddlemanSimpleThumbnailer::Image.options = options
+    end
+
+    def after_build(builder)
+      @resized_images.values.each do |img|
+        builder.thor.say_status :create, "#{img.resized_img_abs_path}"
+        img.save!
+      end
     end
 
     helpers do
@@ -32,9 +35,11 @@ module MiddlemanSimpleThumbnailer
         return super(path, options) unless resize_to
 
         image = MiddlemanSimpleThumbnailer::Image.new(path, resize_to, self.config)
-        if @@is_development
+        if app.development?
           super("data:#{image.mime_type};base64,#{image.base64_data}", options)
         else
+          ext = app.extensions[:middleman_simple_thumbnailer]
+          ext.resized_images.store(image.resized_img_path, image)
           super(image.resized_img_path, options)
         end
       end
