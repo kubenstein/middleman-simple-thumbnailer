@@ -41,7 +41,7 @@ module MiddlemanSimpleThumbnailer
         f.flock(File::LOCK_SH)
         resized_images = Marshal.load(f)
         resized_images.values.each do |img_array|
-          img = MiddlemanSimpleThumbnailer::Image.new(img_array[0], img_array[1], builder.app.config)
+          img = MiddlemanSimpleThumbnailer::Image.new(img_array[0], img_array[1], builder.app)
           builder.thor.say_status :create, "#{img.resized_img_abs_path}"
           img.save!
         end
@@ -55,7 +55,7 @@ module MiddlemanSimpleThumbnailer
         resize_to = options.delete(:resize_to)
         return super(path, options) unless resize_to
 
-        image = MiddlemanSimpleThumbnailer::Image.new(path, resize_to, self.config)
+        image = MiddlemanSimpleThumbnailer::Image.new(path, resize_to, app)
         if app.development?
           super("data:#{image.mime_type};base64,#{image.base64_data}", options)
         else

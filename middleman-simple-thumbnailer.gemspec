@@ -15,11 +15,13 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {fixtures,features}/*`.split("\n")
   s.require_paths = ['lib']
-  
+
   s.add_runtime_dependency 'middleman-core', '~> 4'
   s.add_runtime_dependency 'mini_magick', '~> 4'
 
+  s.add_development_dependency 'middleman-cli', '~> 4'
   s.add_development_dependency 'rake', '~> 10'
-  s.add_development_dependency 'aruba', '~>0.5.4'
+  s.add_development_dependency 'aruba', '~>0.7.4'
   s.add_development_dependency 'cucumber', '~> 1.3'
+  s.add_development_dependency 'capybara', '~> 2.7'
 end

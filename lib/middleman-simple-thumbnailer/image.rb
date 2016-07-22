@@ -1,4 +1,5 @@
 require 'digest'
+require 'base64'
 
 module MiddlemanSimpleThumbnailer
   class Image
@@ -6,10 +7,11 @@ module MiddlemanSimpleThumbnailer
 
     attr_accessor :img_path, :middleman_config, :resize_to
 
-    def initialize(img_path, resize_to, middleman_config)
+    def initialize(img_path, resize_to, app)
       @img_path = img_path
       @resize_to = resize_to
-      @middleman_config = middleman_config
+      @middleman_config = app.config
+      @app = app
     end
 
     def mime_type
@@ -96,7 +98,7 @@ module MiddlemanSimpleThumbnailer
     end
 
     def source_dir
-      middleman_config[:source]
+      File.absolute_path(middleman_config[:source], @app.root)
     end
 
     def images_dir
@@ -108,7 +110,7 @@ module MiddlemanSimpleThumbnailer
     end
 
     def cache_dir
-      @@options.cache_dir
+      File.absolute_path(@@options.cache_dir, @app.root)
     end
   end
 end
