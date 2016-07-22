@@ -1,5 +1,5 @@
-before_script:
-  - bundle update
+before_install:
+  - gem install bundler
 script:
   - bundle exec cucumber
 rvm:
