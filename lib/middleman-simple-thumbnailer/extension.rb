@@ -1,5 +1,4 @@
 require 'tmpdir'
-require_relative 'image_store'#
 # add resize_to param to image_tag to create thumbnails
 #
 #
@@ -25,8 +24,8 @@ module MiddlemanSimpleThumbnailer
     end
 
     def after_build(builder)
-      @images_store.each do |img_entry|
-        img = MiddlemanSimpleThumbnailer::Image.new(img_entry.img_path, img_entry.resize_to, builder.app)
+      @images_store.each do |img_path, resize_to|
+        img = MiddlemanSimpleThumbnailer::Image.new(img_path, resize_to, builder.app)
         builder.thor.say_status :create, "#{img.resized_img_abs_path}"
         img.save!
       end

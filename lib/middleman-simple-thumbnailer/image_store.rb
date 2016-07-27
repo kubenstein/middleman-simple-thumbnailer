@@ -1,8 +1,5 @@
 module MiddlemanSimpleThumbnailer
 
-  class ImageStoreEntry < Struct.new(:img_path, :resize_to)
-  end
-
   class ImageStore
 
     attr_reader :tmp_path
@@ -17,7 +14,7 @@ module MiddlemanSimpleThumbnailer
         resized_images = f.size > 0 ? Marshal.load(f) : {}
         file_key = "#{img_path}.#{resize_to}"
         if ! resized_images.has_key?(file_key)
-          resized_images[file_key] = ImageStoreEntry.new(img_path, resize_to)
+          resized_images[file_key] = [img_path, resize_to]
           f.rewind
           Marshal.dump(resized_images,f)
           f.flush
@@ -31,7 +28,7 @@ module MiddlemanSimpleThumbnailer
         f.flock(File::LOCK_SH)
         resized_images = f.size > 0 ? Marshal.load(f) : {}
         resized_images.values.each do |store_entry|
-          yield store_entry
+          yield *store_entry
         end
       end
     end
