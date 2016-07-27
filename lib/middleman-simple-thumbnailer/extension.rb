@@ -1,6 +1,5 @@
 require 'tmpdir'
-
-#
+require_relative 'image_store'#
 # add resize_to param to image_tag to create thumbnails
 #
 #
@@ -13,23 +12,12 @@ module MiddlemanSimpleThumbnailer
     option :cache_dir, 'tmp/simple-thumbnailer-cache', 'Directory (relative to project root) for cached thumbnails.'
 
     def initialize(app, options_hash={}, &block)
-      super
-      @tmp_path = Dir::Tmpname.create('thumbnail', nil) {}
+        super
+        @images_store = MiddlemanSimpleThumbnailer::ImageStore.new
     end
 
     def store_resized_image(img_path, resize_to)
-      File.open(@tmp_path, File::RDWR|File::CREAT, 0644) do |f|
-        f.flock(File::LOCK_EX)
-        resized_images = f.size > 0 ? Marshal.load(f) : {}
-        file_key = "#{img_path}.#{resize_to}"
-        if ! resized_images.has_key?(file_key)
-          resized_images[file_key] = [img_path, resize_to]
-          f.rewind
-          Marshal.dump(resized_images,f)
-          f.flush
-          f.truncate(f.pos)
-        end
-      end
+      @images_store.store(img_path, resize_to)
     end
 
     def after_configuration
@@ -37,16 +25,12 @@ module MiddlemanSimpleThumbnailer
     end
 
     def after_build(builder)
-      File.open(@tmp_path, "r") do |f|
-        f.flock(File::LOCK_SH)
-        resized_images = Marshal.load(f)
-        resized_images.values.each do |img_array|
-          img = MiddlemanSimpleThumbnailer::Image.new(img_array[0], img_array[1], builder.app)
-          builder.thor.say_status :create, "#{img.resized_img_abs_path}"
-          img.save!
-        end
+      @images_store.each do |img_entry|
+        img = MiddlemanSimpleThumbnailer::Image.new(img_entry.img_path, img_entry.resize_to, builder.app)
+        builder.thor.say_status :create, "#{img.resized_img_abs_path}"
+        img.save!
       end
-      File.delete(@tmp_path)
+      @images_store.delete
     end
 
     helpers do
