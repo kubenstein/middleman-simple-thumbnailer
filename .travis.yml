@@ -1,12 +1,16 @@
+before_install:
+  - gem install bundler
 script:
   - bundle exec cucumber
 rvm:
-  - 1.9.3
-  - 2.0.0
   - ruby-head
+  - 2.3.1
+  - 2.2.4
+  - 2.1
+  - 2.0
 matrix:
   allow_failures:
-    - rvm: ruby-head  
+    - rvm: ruby-head
 notifications:
   email:
     on_success: always
