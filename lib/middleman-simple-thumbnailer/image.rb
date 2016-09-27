@@ -35,6 +35,7 @@ module MiddlemanSimpleThumbnailer
         FileUtils.cp cached_resized_img_abs_path, resized_img_abs_path
       else
         resize!
+        save_cached_thumbnail
         image.write(resized_img_abs_path)
       end
     end
