@@ -94,7 +94,7 @@ module MiddlemanSimpleThumbnailer
     end
 
     def cached_thumbnail_available?
-      File.exist?(cached_resized_img_abs_path)
+      File.exist?(cached_resized_img_abs_path) && (File.mtime(cached_resized_img_abs_path) >= File.mtime(abs_path))
     end
 
     def save_cached_thumbnail
