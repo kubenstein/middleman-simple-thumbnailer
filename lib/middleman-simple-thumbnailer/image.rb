@@ -31,8 +31,13 @@ module MiddlemanSimpleThumbnailer
     end
 
     def save!
-      resize!
-      image.write(resized_img_abs_path)
+      if cached_thumbnail_available?
+        FileUtils.cp cached_resized_img_abs_path, resized_img_abs_path
+      else
+        resize!
+        save_cached_thumbnail
+        image.write(resized_img_abs_path)
+      end
     end
 
     def self.options=(options)
@@ -89,7 +94,7 @@ module MiddlemanSimpleThumbnailer
     end
 
     def cached_thumbnail_available?
-      File.exist?(cached_resized_img_abs_path)
+      File.exist?(cached_resized_img_abs_path) && (File.mtime(cached_resized_img_abs_path) >= File.mtime(abs_path))
     end
 
     def save_cached_thumbnail

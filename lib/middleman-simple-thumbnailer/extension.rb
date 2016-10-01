@@ -37,12 +37,35 @@ module MiddlemanSimpleThumbnailer
       def image_tag(path, options={})
         resize_to = options.delete(:resize_to)
         return super(path, options) unless resize_to
+        ext = app.extensions[:middleman_simple_thumbnailer]
 
-        image = MiddlemanSimpleThumbnailer::Image.new(path, resize_to, app)
         if app.development?
-          super("data:#{image.mime_type};base64,#{image.base64_data}", options)
+
+          # For better performance on local development
+          # (high bandwidth)
+          # simply change width in <img>-tag
+          
+          original_width  = options.delete(:width)
+          resized_width   = resize_to.split('x').first.to_i
+          original_height = options.delete(:height)
+          resized_height  = resize_to.split('x').last.to_i
+          
+          if !original_width.nil? && original_width <= resized_width
+            if original_height <= resized_height
+              options[:width] = original_width
+            else
+              options[:width] = original_width/original_height * resized_height
+            end
+          else
+            options[:width] = resized_width
+          end
+                    
+          super(path, options)
+          
         else
-          ext = app.extensions[:middleman_simple_thumbnailer]
+
+          image = MiddlemanSimpleThumbnailer::Image.new(path, resize_to, app)
+      
           ext.store_resized_image(path, resize_to)
           super(image.resized_img_path, options)
         end
