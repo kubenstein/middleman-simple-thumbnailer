@@ -50,7 +50,7 @@ module MiddlemanSimpleThumbnailer
           original_height = options.delete(:height)
           resized_height  = resize_to.split('x').last.to_i
           
-          if original_width <= resized_width
+          if !original_width.nil? && original_width <= resized_width
             if original_height <= resized_height
               options[:width] = original_width
             else
