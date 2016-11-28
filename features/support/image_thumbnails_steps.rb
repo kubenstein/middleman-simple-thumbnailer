@@ -23,8 +23,8 @@ end
 Then(/^I should see base64ed thumbnails and srcset of the images$/) do
   step %Q{I should see '#{image10x10}'}
   step %Q{I should see '#{image5x5}'}
-  step %Q{I should see '#{srcset15x15}'}
   step %Q{I should see '#{srcset20x20}'}
+  step %Q{I should see '#{srcset15x15}'}
 end
 
 
