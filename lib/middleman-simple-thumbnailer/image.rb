@@ -27,7 +27,7 @@ module MiddlemanSimpleThumbnailer
         resize!
         save_cached_thumbnail
       end
-      Base64.encode64(File.read(cached_resized_img_abs_path))
+      Base64.strict_encode64(File.read(cached_resized_img_abs_path))
     end
 
     def save!
