@@ -34,10 +34,18 @@ You can also use the `image_path` helper the same way in place where you need on
 This extension use ImageMagick (via mini_magick) to resize the images.
 The `resize_to` format is therefore the one defined ny ImageMagick. The documentation can be found [there](http://www.imagemagick.org/script/command-line-processing.php#geometry).
 
+Known limitation
+----------------
+
+In this current implementation, this extension is unable to update the [sitemap](https://middlemanapp.com/advanced/sitemap/). Some extensions (like [middleman-s3_sync](https://github.com/fredjean/middleman-s3_sync)) uses the content of the sitemap to do their work. Therefore, the generated resized images will not be seen by such extensions, even if they are corectly generated.
+
+This issue [#13](https://github.com/kubenstein/middleman-simple-thumbnailer/issues/13) has been opened to describe the problem and discuss the possible solutions to this limitation.
+
 Build/Development modes
 -----
   During development thumbnails will be created on fly and presented as a base64 strings.
   During build thumbnails will be created as normal files and stored in same dir as their originals.
+  
 
 LICENSE
 -----
