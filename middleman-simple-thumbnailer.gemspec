@@ -20,8 +20,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'mini_magick', '~> 4'
 
   s.add_development_dependency 'middleman-cli', '~> 4'
-  s.add_development_dependency 'rake', '~> 10'
-  s.add_development_dependency 'aruba', '~>0.7.4'
-  s.add_development_dependency 'cucumber', '~> 1.3'
-  s.add_development_dependency 'capybara', '~> 2.7'
+  s.add_development_dependency 'rake', '~> 12'
+  s.add_development_dependency 'aruba', '~> 0.14.2'
+  s.add_development_dependency 'cucumber', '~> 2.4'
+  s.add_development_dependency 'capybara', '~> 2.15'
 end

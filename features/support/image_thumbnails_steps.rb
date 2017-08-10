@@ -35,9 +35,9 @@ end
 
 Then(/^the cache directory should exist (?:at "([^"]+)" )?with the following files$/) do |cache_dir, files|
   cache_dir ||= MiddlemanSimpleThumbnailer::Extension.config.cache_dir
-  check_directory_presence([cache_dir], true)
+  expect(cache_dir).to be_an_existing_directory
   cd cache_dir
-  files.raw.map{|file_row| file_row[0]}.each { |f| expect(f).to be_existing_file }
+  files.raw.map{|file_row| file_row[0]}.each { |f| expect(f).to be_an_existing_file }
 end
 
 Then(/^I should see base64ed data of the cached thumbnails with image path$/) do
