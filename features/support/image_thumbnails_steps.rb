@@ -68,7 +68,7 @@ end
 
 Then(/^the following images should exist:$/) do |table|
   table.hashes.each do |row|
-    in_current_dir do
+    cd('.')  do
       image = MiniMagick::Image.open(row["filename"])
       expect(image.dimensions).to eq row["dimensions"].split("x").map(&:to_i)
     end
