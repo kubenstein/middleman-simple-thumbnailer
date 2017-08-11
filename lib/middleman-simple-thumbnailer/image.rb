@@ -52,11 +52,7 @@ module MiddlemanSimpleThumbnailer
     end
 
     def middleman_abs_path
-      if @app.extensions[:relative_assets].nil?
-        img_path.start_with?('/') ? img_path : File.join(images_dir, img_path)
-      else 
-        img_path
-      end
+      img_path.start_with?('/') ? img_path : File.join(images_dir, img_path)
     end
 
 
