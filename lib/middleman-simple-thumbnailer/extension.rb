@@ -36,23 +36,31 @@ module MiddlemanSimpleThumbnailer
 
       def image_tag(path, options={})
         if (resize_to = options.delete(:resize_to))
-          super(image_path(path, resize_to: resize_to), options)
+          super(image_name(path, resize_to), options)
         else
           super(path, options)
         end
       end
 
       def image_path(path, options={})
-        resize_to = options.delete(:resize_to)
-        return super(path) unless resize_to
+        if (resize_to = options.delete(:resize_to))
+          super(image_name(path, resize_to))
+        else
+          super(path)
+        end
+      end
+
+      #  returns data or modified image name
+      def image_name(path, resize_to=nil)
+        return path unless resize_to
 
         image = MiddlemanSimpleThumbnailer::Image.new(path, resize_to, app)
         if app.development?
-          super("data:#{image.mime_type};base64,#{image.base64_data}")
+          "data:#{image.mime_type};base64,#{image.base64_data}"
         else
           ext = app.extensions[:middleman_simple_thumbnailer]
           ext.store_resized_image(path, resize_to)
-          super(image.resized_img_path)
+          image.resized_img_path
         end
       end
 
