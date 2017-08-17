@@ -1,0 +1,5 @@
+---
+- path: original.jpg
+  resize_to: 10x10
+- path: "*.jpg"
+  resize_to: 5x5

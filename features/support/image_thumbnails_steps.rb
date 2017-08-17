@@ -1,4 +1,6 @@
 require 'base64'
+require 'yaml'
+
 def calculate_resized_image_b64(resize_str)
   base_image = MiniMagick::Image.open(File.expand_path("../../fixtures/basic-app/source/images/original.jpg", __dir__))
   base_image.resize(resize_str)
@@ -73,4 +75,19 @@ Then(/^the following images should exist:$/) do |table|
       expect(image.dimensions).to eq row["dimensions"].split("x").map(&:to_i)
     end
   end
+end
+
+Then(/^file "([^"]+)" should contain the following data:$/) do |file, data|
+  expect(file).to be_an_existing_file
+  cd('.') do
+    specs = YAML.load_file(file)
+    expect(specs.length).to eq(data.hashes.length)
+    data.hashes.each do |hash|
+      expect(specs).to include(hash)
+    end
+  end
+end
+
+Then(/^the file "([^"]*)" should not contain '([^']*)'$/) do |file, partial_content|
+  expect(file).not_to have_file_content(Regexp.new(Regexp.escape(partial_content)), true)
 end

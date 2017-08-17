@@ -1,0 +1,5 @@
+<ul>
+    <% sitemap.resources.each do |page| %>
+        <li><a href="<%= "#{page.url}" %>"><%= "#{page.url}" %></a></li>
+    <% end %>
+</ul>

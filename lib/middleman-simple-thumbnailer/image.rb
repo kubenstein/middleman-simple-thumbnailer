@@ -3,15 +3,15 @@ require 'base64'
 
 module MiddlemanSimpleThumbnailer
   class Image
-    @@options = nil
 
     attr_accessor :img_path, :middleman_config, :resize_to
 
-    def initialize(img_path, resize_to, app)
+    def initialize(img_path, resize_to, app, options_hash)
       @img_path = img_path
       @resize_to = resize_to
       @middleman_config = app.config
       @app = app
+      @options = options_hash
     end
 
     def mime_type
@@ -22,26 +22,32 @@ module MiddlemanSimpleThumbnailer
       img_path.gsub(image_name, resized_image_name)
     end
 
-    def base64_data
+    def prepare_thumbnail
       unless cached_thumbnail_available?
         resize!
         save_cached_thumbnail
       end
+    end
+
+    def base64_data
+      prepare_thumbnail
       Base64.strict_encode64(File.read(cached_resized_img_abs_path))
     end
 
-    def save!
-      unless cached_thumbnail_available?
-        resize!
-        save_cached_thumbnail
-      end
+    def render
+      prepare_thumbnail
+      File.read(cached_resized_img_abs_path)
+    end
 
+
+    def save!
+      prepare_thumbnail
       FileUtils.copy_file(cached_resized_img_abs_path, resized_img_abs_path)
     end
 
-    def self.options=(options)
-      @@options = options
-    end
+    # def self.options=(options)
+    #   @@options = options
+    # end
 
     def resized_img_abs_path
       File.join(build_dir, middleman_abs_path).gsub(image_name, resized_image_name)
@@ -55,6 +61,11 @@ module MiddlemanSimpleThumbnailer
       img_path.start_with?('/') ? img_path : File.join(images_dir, img_path)
     end
 
+    def cached_resized_img_abs_path
+      File.join(cache_dir, middleman_abs_path).gsub(image_name, resized_image_name).split('.').tap { |a|
+        a.insert(-2, image_checksum)
+      }.join('.')
+    end
 
     private
 
@@ -79,17 +90,11 @@ module MiddlemanSimpleThumbnailer
 
     def resized_image_name
       image_name.split('.').tap { |a| a.insert(-2, resize_to) }.join('.') # add resize_to sufix
-          .gsub(/[%@!<>^]/, '>' => 'gt', '<' => 'lt', '^' => 'c')                     # sanitize file name
+          .gsub(/[%@!<>^]/, '>' => 'gt', '<' => 'lt', '^' => 'c')         # sanitize file name
     end
 
     def abs_path
       File.join(source_dir, middleman_abs_path)
-    end
-
-    def cached_resized_img_abs_path
-      File.join(cache_dir, middleman_abs_path).gsub(image_name, resized_image_name).split('.').tap { |a|
-        a.insert(-2, image_checksum)
-      }.join('.')
     end
 
     def cached_thumbnail_available?
@@ -114,7 +119,7 @@ module MiddlemanSimpleThumbnailer
     end
 
     def cache_dir
-      File.absolute_path(@@options.cache_dir, @app.root)
+      File.absolute_path(@options.cache_dir, @app.root)
     end
   end
 end

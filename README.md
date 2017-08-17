@@ -4,17 +4,20 @@ Middleman Simple Thumbnailer [![Build Status](https://travis-ci.org/kubenstein/m
 Middleman Simple Thumbnailer is a [Middleman](http://middlemanapp.com/) extension that allows you to create image thumbnails by providing `resize_to` option to image_tag helper.
 
 
-Installation
--------
+## Installation
+
 Put this line into your `Gemfile`:
 ```
 gem 'middleman-simple-thumbnailer'
 ```
 
-Usage
------
+## Usage
+
+
+### Dynamic mode
+
 Enable the extension in `config.rb`:
-```
+```ruby
 activate :middleman_simple_thumbnailer
 ```
 
@@ -24,9 +27,9 @@ And modify your `image_tag`'s by adding `resize_to` parameter:
 ```
 
 You can also use the `image_path` helper the same way in place where you need only the path of the resized image:
-```
+```html
 <picture>
-  <source srcset="<%= image_path "original.jpg", resize_to: 1200 %>" media="(min-width: 900px)">
+  <source srcset="<%= image_path 'original.jpg', resize_to: 1200 %>" media="(min-width: 900px)">
   <%= image_tag "original.jpg", resize_to: "400%", class: 'the-image-class' %>
 </picture>
 ``` 
@@ -34,19 +37,62 @@ You can also use the `image_path` helper the same way in place where you need on
 This extension use ImageMagick (via mini_magick) to resize the images.
 The `resize_to` format is therefore the one defined ny ImageMagick. The documentation can be found [there](http://www.imagemagick.org/script/command-line-processing.php#geometry).
 
-Known limitation
-----------------
+### Specification file mode
 
-In this current implementation, this extension is unable to update the [sitemap](https://middlemanapp.com/advanced/sitemap/). Some extensions (like [middleman-s3_sync](https://github.com/fredjean/middleman-s3_sync)) uses the content of the sitemap to do their work. Therefore, the generated resized images will not be seen by such extensions, even if they are corectly generated.
+In this mode, the resized file are declared in the sitemap and generated at the same time than the other files.
 
-This issue [#13](https://github.com/kubenstein/middleman-simple-thumbnailer/issues/13) has been opened to describe the problem and discuss the possible solutions to this limitation.
+To activate this new mode, the option `:use_specs` must be used when activating the extension.
 
-Build/Development modes
------
-  During development thumbnails will be created on fly and presented as a base64 strings.
-  During build thumbnails will be created as normal files and stored in same dir as their originals.
-  
+```ruby
+activate :middleman_simple_thumbnailer, use_specs: true
+```
 
-LICENSE
------
+Then the resizing specifications must be declared in a special [Middleman data file](https://middlemanapp.com/advanced/data-files/). By default the extension will look for `data/simple_thumbnailer.yaml`.
+
+This file must contains a list of mappings with the following keys:
+  - `path`: the relative path of the image file in the `source\images` folder. This can be a glob pattern (https://ruby-doc.org/core/Dir.html#method-c-glob) (still relative to the `source\images` folder).
+  - `resize_to`: the [ImageMagix resize](http://www.imagemagick.org/script/command-line-processing.php#geometry) parameter
+
+example (in yaml, file `data/simple_thumbnailer.yaml`):
+
+```yaml
+---
+- path: original.jpg
+  resize_to: 10x10
+- path: "*.jpg"
+  resize_to: 5x5
+```
+
+The use of the `image_tag` and `image_path` helpers stay the same.
+
+In this mode if a resizing specification found in an `image_tag` or `image_path` helper is not declared in the specification data file, a warning is emitted and the data file is rewritten to include the resizing specification. If the specification file doesn't exist, it is created.
+
+
+### options
+
+Option                        | default value                    | Description 
+------------------------------|----------------------------------|-------------
+:cache_dir                    | `'tmp/simple-thumbnailer-cache'` | Directory (relative to project root) for cached thumbnails.
+:use_specs                    | `false`                          | Wether or not use resize specfication data file
+:specs\_data                  | `'simple_thumbnailer'`           | name of the specification data file. It must follow the Middleman data file name convention.
+:specs\_data\_default\_format | `'yaml'`                         | defaut specification format (and extension). Can be 'yml', 'yaml', 'json'
+:specs\_data\_save\_old       | `true`                           | save previous specification data file
+:update\_specs                | `true`                           | Warn about missing image files in the specification file and add them to it. The spécification file will be overwritten.
+
+
+## Known limitation
+
+In the dynamic mode, this extension is unable to update the [sitemap](https://middlemanapp.com/advanced/sitemap/). Some extensions (like [middleman-s3_sync](https://github.com/fredjean/middleman-s3_sync)) uses the content of the sitemap to do their work. Therefore, the generated resized images will not be seen by such extensions, even if they are corectly generated.
+
+
+## Build/Development modes
+
+During development thumbnails will be created on fly and presented as a base64 strings.
+
+During build thumbnails will be created as normal files and stored in same dir as their originals.
+
+
+
+## LICENSE
+
 MIT
