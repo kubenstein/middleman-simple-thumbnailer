@@ -13,8 +13,7 @@ gem 'middleman-simple-thumbnailer'
 
 ## Usage
 
-
-### Dynamic mode
+### All mode
 
 Enable the extension in `config.rb`:
 ```ruby
@@ -37,9 +36,15 @@ You can also use the `image_path` helper the same way in place where you need on
 This extension use ImageMagick (via mini_magick) to resize the images.
 The `resize_to` format is therefore the one defined ny ImageMagick. The documentation can be found [there](http://www.imagemagick.org/script/command-line-processing.php#geometry).
 
-### Specification file mode
+### Dynamic mode
 
-In this mode, the resized file are declared in the sitemap and generated at the same time than the other files.
+This mode is the default operating mode for this extension.
+The images are generated according to their declaration in the helpers.
+See the [known limitations](#known-limitation) paragraph below for known limitation in this mode.
+
+### Declarative mode
+
+In this mode, the resized file are declared. They are then added to the sitemap and generated at the same time than the other files.
 
 To activate this new mode, the option `:use_specs` must be used when activating the extension.
 
@@ -65,7 +70,7 @@ example (in yaml, file `data/simple_thumbnailer.yaml`):
 
 The use of the `image_tag` and `image_path` helpers stay the same.
 
-In this mode if a resizing specification found in an `image_tag` or `image_path` helper is not declared in the specification data file, a warning is emitted and the data file is rewritten to include the resizing specification. If the specification file doesn't exist, it is created.
+In this mode if a resizing specification found in an `image_tag` or `image_path` helper is not declared in the specification data file, a warning is emitted and the data file is rewritten to include the resizing specification. If the specification file doesn't exist, it is created (this behavior can be configured).
 
 
 ### options
@@ -90,7 +95,6 @@ In the dynamic mode, this extension is unable to update the [sitemap](https://mi
 During development thumbnails will be created on fly and presented as a base64 strings.
 
 During build thumbnails will be created as normal files and stored in same dir as their originals.
-
 
 
 ## LICENSE
