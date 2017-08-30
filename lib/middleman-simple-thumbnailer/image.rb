@@ -1,5 +1,4 @@
 require 'digest'
-require 'base64'
 
 module MiddlemanSimpleThumbnailer
   class Image
@@ -29,11 +28,6 @@ module MiddlemanSimpleThumbnailer
       end
     end
 
-    def base64_data
-      prepare_thumbnail
-      Base64.strict_encode64(File.read(cached_resized_img_abs_path))
-    end
-
     def render
       prepare_thumbnail
       File.read(cached_resized_img_abs_path)
@@ -44,10 +38,6 @@ module MiddlemanSimpleThumbnailer
       prepare_thumbnail
       FileUtils.copy_file(cached_resized_img_abs_path, resized_img_abs_path)
     end
-
-    # def self.options=(options)
-    #   @@options = options
-    # end
 
     def resized_img_abs_path
       File.join(build_dir, middleman_abs_path).gsub(image_name, resized_image_name)
@@ -88,6 +78,10 @@ module MiddlemanSimpleThumbnailer
       File.basename(abs_path)
     end
 
+    def original_mtime
+     File.mtime abs_path
+    end
+
     def resized_image_name
       image_name.split('.').tap { |a| a.insert(-2, resize_to) }.join('.') # add resize_to sufix
           .gsub(/[%@!<>^]/, '>' => 'gt', '<' => 'lt', '^' => 'c')         # sanitize file name
@@ -104,6 +98,7 @@ module MiddlemanSimpleThumbnailer
     def save_cached_thumbnail
       FileUtils.mkdir_p(File.dirname(cached_resized_img_abs_path))
       image.write(cached_resized_img_abs_path)
+      File.utime(original_mtime, original_mtime, cached_resized_img_abs_path)
     end
 
     def source_dir

@@ -2,6 +2,7 @@ require 'tmpdir'
 require 'yaml'
 require 'json'
 require 'tempfile'
+require 'uri'
 # add resize_to param to image_tag to create thumbnails
 #
 #
@@ -30,13 +31,13 @@ module MiddlemanSimpleThumbnailer
         end
     end
 
+    def after_configuration
+      app.use MiddlemanSimpleThumbnailer::Rack, options, app, options
+    end
+
     def store_resized_image(img_path, resize_to)
       @images_store.store(img_path, resize_to)
     end
-
-    # def after_configuration
-    #   MiddlemanSimpleThumbnailer::Image.options = options
-    # end
 
     def check_image_in_specs(img_path, resize_to)
       @resize_specs.each do |resize_spec|
@@ -46,12 +47,6 @@ module MiddlemanSimpleThumbnailer
       end
       return false
     end
-
-
-    # def source_dir
-    #   File.absolute_path(app.config[:source], app.root)
-    # end
-
 
     def manipulate_resource_list(resources)
       return resources unless options.use_specs
@@ -135,23 +130,30 @@ module MiddlemanSimpleThumbnailer
 
         image = MiddlemanSimpleThumbnailer::Image.new(path, resize_to, app, ext.options)
         if app.development?
-          "data:#{image.mime_type};base64,#{image.base64_data}"
+          [path, {"simple-thumbnailer" => "#{path}|#{resize_to}"}]
         else
           ext.store_resized_image(path, resize_to)
-          image.resized_img_path
+          [image.resized_img_path, {}]
         end
       end
 
       def image_tag(path, options={})
         resize_to = options.delete(:resize_to)
-        new_path = resize_to ? resized_image_path(path, resize_to) : path
+        new_path, query_params = resize_to ? resized_image_path(path, resize_to) : [path, {}]
+        if(!query_params.empty?)
+          new_path = "#{new_path}?#{URI.encode_www_form(query_params)}"
+        end
         super(new_path, options)
       end
 
       def image_path(path, options={})
         resize_to = options.delete(:resize_to)
-        new_path = resize_to ? resized_image_path(path, resize_to) : path
-        super(new_path)
+        new_path, query_params = resize_to ? resized_image_path(path, resize_to) : [path, {}]
+        res = super(new_path)
+        if(!query_params.empty?)
+          res = "#{res}?#{URI.encode_www_form(query_params)}"
+        end
+        res
       end
     
     end

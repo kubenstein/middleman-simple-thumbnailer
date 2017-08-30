@@ -92,7 +92,7 @@ In the dynamic mode, this extension is unable to update the [sitemap](https://mi
 
 ## Build/Development modes
 
-During development thumbnails will be created on fly and presented as a base64 strings.
+During development thumbnails will be created when accessed. They are served with a rack middleware from the cache folder.
 
 During build thumbnails will be created as normal files and stored in same dir as their originals.
 

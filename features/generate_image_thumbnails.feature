@@ -14,7 +14,11 @@ Feature: Generate image thumbnails
   Scenario: Generate base64 thumbnail of image with resize_to param given
     Given the Server is running at "basic-app"
     When I go to "/page-with-images-to-resize.html"
-    Then I should see base64ed thumbnails of the images
+    Then I should see urls for the following cached thumbnails:
+      | type | size   | class | relative | alt              |
+      | img  | 10x10> | 10x10 | false    | Original.10x10gt |
+      | img  | 5x5    | 5x5   | false    | Original.5x5     |
+
 
   Scenario: After build server resized images
     Given a fixture app "basic-app"
