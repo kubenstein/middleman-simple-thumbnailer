@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ['niewczas.jakub@gmail.com']
   s.homepage    = 'https://github.com/kubenstein/middleman-simple-thumbnailer'
   s.license     = 'MIT'
-  s.summary     = %q{Middleman extension that allows you to create image thumbnails by providing resize_to option to image_tag helper}
+  s.summary     = %q{Middleman extension that allows you to create image thumbnails}
   s.description = %q{Middleman extension that allows you to create image thumbnails by providing resize_to option to image_tag helper}
 
   s.files         = `git ls-files`.split("\n")
