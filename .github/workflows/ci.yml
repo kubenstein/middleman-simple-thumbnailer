@@ -12,7 +12,7 @@ jobs:
         ruby-version: ['2.7']
     steps:
     - name: install imagemagick
-      run: apt-get install imagemagick
+      run: sudo apt-get install imagemagick
     - uses: actions/checkout@v2
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
