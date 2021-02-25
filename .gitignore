@@ -5,3 +5,6 @@ pkg/*
 .rvmrc
 tmp
 .ruby-version
+.direnv
+.envrc
+.vscode

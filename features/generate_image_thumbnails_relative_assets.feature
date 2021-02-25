@@ -26,7 +26,7 @@ Feature: Generate image thumbnails
       | images/original.5x5.jpg     |  5x2       |
       | images/original.20x20gt.jpg | 20x9       |
       | images/original.15x15gt.jpg | 15x7       |
-    And the file "page-with-images-to-resize.html" should contain '<img src="images/original.10x10.jpg" class="image-resized-to10x10" alt="Original.10x10" />'
+    And the file "page-with-images-to-resize.html" should contain '<img src="images/original.10x10.jpg" class="image-resized-to10x10" alt="Original.10x10gt" />'
     And the file "page-with-images-to-resize.html" should contain '<source srcset="images/original.20x20gt.jpg" media="(min-width: 900px)">'
     And the file "page-with-images-to-resize.html" should contain '<img src="images/original.5x5.jpg" class="image-resized-to5x5" alt="Original.5x5" />'
     And the file "page-with-images-to-resize.html" should contain '<source srcset="images/original.15x15gt.jpg" media="(min-width: 900px)">'
