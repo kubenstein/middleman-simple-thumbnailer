@@ -1,0 +1,24 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental == true }}
+    name: ubuntu-ruby-${{ matrix.ruby-version }}
+    strategy:
+      matrix:
+        ruby-version: ['2.7']
+    steps:
+    - name: install imagemagick
+      run: apt-get install imagemagick
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+    - name: Runs tests
+      run: bundle exec cucumber
+ 
