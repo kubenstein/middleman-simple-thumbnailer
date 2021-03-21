@@ -24,6 +24,7 @@ module MiddlemanSimpleThumbnailer
     end
 
     def each
+      return unless File.exist?(@tmp_path)
       File.open(@tmp_path, "r") do |f|
         f.flock(File::LOCK_SH)
         resized_images = f.size > 0 ? Marshal.load(f) : {}
@@ -34,7 +35,7 @@ module MiddlemanSimpleThumbnailer
     end
 
     def delete
-      File.delete(@tmp_path)
+      File.delete(@tmp_path) if File.exist?(@tmp_path)
     end
 
   end
