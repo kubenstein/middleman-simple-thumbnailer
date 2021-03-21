@@ -26,3 +26,9 @@ Feature: Generate image thumbnails
       | images/original.5x5.jpg     |  5x2       |
     And the file "page-with-images-to-resize.html" should contain '<img src="/images/original.10x10gt.jpg" class="image-resized-to10x10" alt="Original.10x10gt" />'
     And the file "page-with-images-to-resize.html" should contain '<img src="/images/original.5x5.jpg" class="image-resized-to5x5" alt="Original.5x5" />'
+
+  Scenario: Not using resize_to should nt fail the build
+    Given a fixture app "basic-app-no-resize"
+    And a successfully built app at "basic-app-no-resize"
+    When I cd to "build"
+    Then the file "page-with-untouched-image.html" should contain '<img src="/images/original.jpg" alt="Original" />'
