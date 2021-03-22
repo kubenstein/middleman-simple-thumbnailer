@@ -77,8 +77,9 @@ In this mode if a resizing specification found in an `image_tag` or `image_path`
 
 Option                        | default value                    | Description 
 ------------------------------|----------------------------------|-------------
-:cache_dir                    | `'tmp/simple-thumbnailer-cache'` | Directory (relative to project root) for cached thumbnails.
-:use_specs                    | `false`                          | Wether or not use resize specfication data file
+:use\_cache\_dev              | `true`                           | In development, add a Rack middleware to serve the resized image from cache
+:cache\_dir                   | `'tmp/simple-thumbnailer-cache'` | Directory (relative to project root) for cached thumbnails.
+:use\_specs                   | `false`                          | Wether or not use resize specfication data file
 :specs\_data                  | `'simple_thumbnailer'`           | name of the specification data file. It must follow the Middleman data file name convention.
 :specs\_data\_default\_format | `'yaml'`                         | defaut specification format (and extension). Can be 'yml', 'yaml', 'json'
 :specs\_data\_save\_old       | `true`                           | save previous specification data file
@@ -92,7 +93,9 @@ In the dynamic mode, this extension is unable to update the [sitemap](https://mi
 
 ## Build/Development modes
 
-During development thumbnails will be created on fly and presented as a base64 strings.
+During development:
+  - if option `use_cache_dev` is set to `true` thumbnails will be created when accessed, and are served with a rack middleware from the cache folder.
+  - Otherwise thumbnails will be created on fly and presented as a base64 strings.
 
 During build thumbnails will be created as normal files and stored in same dir as their originals.
 

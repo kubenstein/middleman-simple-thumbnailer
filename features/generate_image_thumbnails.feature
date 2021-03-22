@@ -11,6 +11,14 @@ Feature: Generate image thumbnails
     When I cd to "build"
     Then the file "page-with-untouched-image.html" should contain '<img src="/images/original.jpg" alt="Original" />'
 
+  Scenario: Generate base64 thumbnail of image with resize_to param given use cache dev
+    Given the Server is running at "basic-app-use-cache"
+    When I go to "/page-with-images-to-resize.html"
+    Then I should see urls for the following cached thumbnails:
+      | type | size   | class | relative | alt              |
+      | img  | 10x10> | 10x10 | false    | Original.10x10gt |
+      | img  | 5x5    | 5x5   | false    | Original.5x5     |
+
   Scenario: Generate base64 thumbnail of image with resize_to param given
     Given the Server is running at "basic-app"
     When I go to "/page-with-images-to-resize.html"
