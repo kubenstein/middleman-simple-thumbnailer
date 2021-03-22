@@ -1,4 +1,5 @@
 require 'digest'
+require 'base64'
 
 module MiddlemanSimpleThumbnailer
   class Image
@@ -19,6 +20,11 @@ module MiddlemanSimpleThumbnailer
 
     def resized_img_path
       img_path.gsub(image_name, resized_image_name)
+    end
+
+    def base64_data
+      prepare_thumbnail
+      Base64.strict_encode64(File.read(cached_resized_img_abs_path))
     end
 
     def prepare_thumbnail

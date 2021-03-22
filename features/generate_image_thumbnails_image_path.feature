@@ -13,13 +13,20 @@ Feature: Generate image thumbnails with image path
     Then the file "page-with-untouched-image.html" should contain '<img src="/images/original.jpg" alt="Original" />'
     And the file "page-with-untouched-image.html" should contain '<source srcset="/images/original.jpg" media="(min-width: 900px)">'
 
-  Scenario: Generate base64 thumbnail of image with resize_to param given
-    Given the Server is running at "basic-app-image-path"
+
+  Scenario: Generate url thumbnail of image with resize_to param given use cache dev
+    Given the Server is running at "basic-app-image-path-use-cache"
     When I go to "/page-with-images-to-resize.html"
     Then I should see urls for the following cached thumbnails:
       | type | size   | class | relative | alt              |
       | img  | 10x10> | 10x10 | false    | Original.10x10gt |
       | img  | 5x5    | 5x5   | false    | Original.5x5     |
+
+  Scenario: Generate base64 thumbnail of image with resize_to param given
+    Given the Server is running at "basic-app-image-path"
+    When I go to "/page-with-images-to-resize.html"
+    Then I should see base64ed thumbnails and srcset of the images
+
 
   Scenario: After build server resized images
     Given a fixture app "basic-app-image-path"

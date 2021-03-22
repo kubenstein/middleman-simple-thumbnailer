@@ -18,6 +18,7 @@ module MiddlemanSimpleThumbnailer
     option :specs_data_default_format, 'yaml', 'defaut specification file format (and extension). Can be yaml, yml or json'
     option :specs_data_save_old, true, 'save previous specification data file '
     option :update_specs, true, 'Warn about missing image file in specification and add them to teh spec file'
+    option :use_cache_dev, false, 'In development, add a Rack middleware to serve the resized image from cache'
 
     def initialize(app, options_hash={}, &block)
         super
@@ -32,7 +33,9 @@ module MiddlemanSimpleThumbnailer
     end
 
     def after_configuration
-      app.use MiddlemanSimpleThumbnailer::Rack, options, app, options
+      if app.development? && options.use_cache_dev
+        app.use MiddlemanSimpleThumbnailer::Rack, options, app, options
+      end
     end
 
     def store_resized_image(img_path, resize_to)
@@ -130,7 +133,11 @@ module MiddlemanSimpleThumbnailer
 
         image = MiddlemanSimpleThumbnailer::Image.new(path, resize_to, app, ext.options)
         if app.development?
-          [path, {"simple-thumbnailer" => "#{path}|#{resize_to}"}]
+          if ext.options.use_cache_dev
+            [path, {"simple-thumbnailer" => "#{path}|#{resize_to}"}]
+          else
+            ["data:#{image.mime_type};base64,#{image.base64_data}", {}]
+          end
         else
           ext.store_resized_image(path, resize_to)
           [image.resized_img_path, {}]
