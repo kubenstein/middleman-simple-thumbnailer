@@ -82,7 +82,7 @@ module MiddlemanSimpleThumbnailer
           resize_specs_modified = true
         end
         img = MiddlemanSimpleThumbnailer::Image.new(img_path, resize_to, builder.app, options)
-        if !File.exists?(img.resized_img_abs_path)
+        if !img.cached_thumbnail_available? or !File.exists?(img.resized_img_abs_path)
           builder.thor.say_status :create, "#{img.resized_img_abs_path}"
           img.save!
         end

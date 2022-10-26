@@ -63,6 +63,10 @@ module MiddlemanSimpleThumbnailer
       }.join('.')
     end
 
+    def cached_thumbnail_available?
+      File.exist?(cached_resized_img_abs_path)
+    end
+
     private
 
     def resize!
@@ -95,10 +99,6 @@ module MiddlemanSimpleThumbnailer
 
     def abs_path
       File.join(source_dir, middleman_abs_path)
-    end
-
-    def cached_thumbnail_available?
-      File.exist?(cached_resized_img_abs_path)
     end
 
     def save_cached_thumbnail
